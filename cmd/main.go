@@ -9,7 +9,7 @@ import (
 	"net/http"
 
 	"github.com/arangodb/go-driver"
-	"github.com/arangodb/go-driver/http"
+	arangohttp "github.com/arangodb/go-driver/http"
 	"github.com/gorilla/mux"
 )
 
@@ -17,8 +17,8 @@ func main() {
 	fmt.Println("Server is up and running...")
 
 	// connect to ArangoDB
-	conn, err := http.NewConnection(
-		http.ConnectionConfig{
+	conn, err := arangohttp.NewConnection(
+		arangohttp.ConnectionConfig{
 			Endpoints: []string{"http://localhost:8529"},
 		},
 	)
