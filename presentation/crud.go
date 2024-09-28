@@ -32,7 +32,6 @@ func (ph ProductHandler) GetProducts(writer http.ResponseWriter, request *http.R
 	writer.WriteHeader(http.StatusOK)
 	result, _ := json.Marshal(products)
 	writer.Write(result)
-	return
 }
 
 func (ph ProductHandler) GetProduct(writer http.ResponseWriter, request *http.Request) {
@@ -59,7 +58,6 @@ func (ph ProductHandler) GetProduct(writer http.ResponseWriter, request *http.Re
 	writer.WriteHeader(http.StatusOK)
 	result, _ := json.Marshal(product)
 	writer.Write(result)
-	return
 }
 
 func (ph ProductHandler) CreateProduct(writer http.ResponseWriter, request *http.Request) {
@@ -95,5 +93,4 @@ func (ph ProductHandler) CreateProduct(writer http.ResponseWriter, request *http
 	writer.WriteHeader(http.StatusOK)
 	result, _ := json.Marshal(product)
 	writer.Write(result)
-	return
 }
