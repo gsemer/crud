@@ -1,12 +1,16 @@
 package main
 
 import (
+	"crud/app/services"
 	"crud/persistence"
+	"crud/presentation"
 	"fmt"
 	"log"
+	"net/http"
 
 	"github.com/arangodb/go-driver"
 	"github.com/arangodb/go-driver/http"
+	"github.com/gorilla/mux"
 )
 
 func main() {
@@ -51,4 +55,20 @@ func main() {
 			log.Fatalf("%v", err)
 		}
 	}
+
+	// router
+	r := mux.NewRouter()
+
+	productRepository := persistence.NewProductRepository(db)
+	productService := services.NewProductService(productRepository)
+
+	productRoutes := presentation.CreateRoutes(productService)
+	for routePath, routeMethods := range productRoutes {
+		fmt.Printf("adding %s route with methods %v\n", routePath, routeMethods.Methods)
+		r.Handle(routePath, routeMethods.HandlerFunc).Methods(routeMethods.Methods...)
+	}
+
+	http.Handle("/", r)
+
+	log.Fatal(http.ListenAndServe(":8000", r))
 }
