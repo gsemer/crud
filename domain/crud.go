@@ -8,3 +8,16 @@ type Product struct {
 	Category string `json:"category"`
 	Quality  string `json:"quality"`
 }
+
+type Error struct {
+	Status      string
+	Description string
+}
+
+type ProductService interface {
+	GetProducts() ([]Product, error)
+}
+
+type ProductRepository interface {
+	GetProducts() ([]Product, error)
+}
