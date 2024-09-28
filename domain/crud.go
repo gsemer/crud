@@ -17,9 +17,11 @@ type Error struct {
 type ProductService interface {
 	GetProducts() ([]Product, error)
 	GetProduct(key string) (Product, error)
+	CreateProduct(Product) (Product, error)
 }
 
 type ProductRepository interface {
 	GetProducts() ([]Product, error)
 	GetProduct(key string) (Product, error)
+	CreateProduct(Product) (Product, error)
 }

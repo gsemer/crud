@@ -14,5 +14,9 @@ func CreateRoutes(service domain.ProductService) map[string]domain.RouteDefiniti
 			Methods:     []string{"GET"},
 			HandlerFunc: ph.GetProduct,
 		},
+		"/products/create": {
+			Methods:     []string{"POST"},
+			HandlerFunc: ph.CreateProduct,
+		},
 	}
 }

@@ -69,3 +69,21 @@ func (pr ProductRepository) GetProduct(key string) (domain.Product, error) {
 	}
 	return product, nil
 }
+
+func (pr ProductRepository) CreateProduct(product domain.Product) (domain.Product, error) {
+	meta, err := pr.collection.CreateDocument(context.Background(), &product)
+	if err != nil {
+		log.Fatalf("Couldn't create new document")
+		return domain.Product{}, err
+	}
+
+	product = domain.Product{
+		ID:       string(meta.ID),
+		Key:      meta.Key,
+		Name:     product.Name,
+		Price:    product.Price,
+		Category: product.Category,
+		Quality:  product.Quality,
+	}
+	return product, nil
+}
