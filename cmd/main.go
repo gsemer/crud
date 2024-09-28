@@ -59,7 +59,7 @@ func main() {
 	// router
 	r := mux.NewRouter()
 
-	productRepository := persistence.NewProductRepository(db)
+	productRepository := persistence.NewProductRepository(db, collection)
 	productService := services.NewProductService(productRepository)
 
 	productRoutes := presentation.CreateRoutes(productService)
