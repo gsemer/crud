@@ -10,5 +10,9 @@ func CreateRoutes(service domain.ProductService) map[string]domain.RouteDefiniti
 			Methods:     []string{"GET"},
 			HandlerFunc: ph.GetProducts,
 		},
+		"/products/{key}": {
+			Methods:     []string{"GET"},
+			HandlerFunc: ph.GetProduct,
+		},
 	}
 }

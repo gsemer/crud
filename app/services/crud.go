@@ -17,3 +17,11 @@ func (ps ProductService) GetProducts() ([]domain.Product, error) {
 	}
 	return products, nil
 }
+
+func (ps ProductService) GetProduct(key string) (domain.Product, error) {
+	product, err := ps.pr.GetProduct(key)
+	if err != nil {
+		return domain.Product{}, err
+	}
+	return product, nil
+}

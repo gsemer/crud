@@ -9,11 +9,12 @@ import (
 )
 
 type ProductRepository struct {
-	db driver.Database
+	db         driver.Database
+	collection driver.Collection
 }
 
-func NewProductRepository(db driver.Database) *ProductRepository {
-	return &ProductRepository{db: db}
+func NewProductRepository(db driver.Database, collection driver.Collection) *ProductRepository {
+	return &ProductRepository{db: db, collection: collection}
 }
 
 func (pr ProductRepository) GetProducts() ([]domain.Product, error) {
@@ -44,8 +45,27 @@ func (pr ProductRepository) GetProducts() ([]domain.Product, error) {
 			Category: product.Category,
 			Quality:  product.Quality,
 		}
-
 		products = append(products, product)
 	}
 	return products, nil
+}
+
+func (pr ProductRepository) GetProduct(key string) (domain.Product, error) {
+	var product domain.Product
+
+	meta, err := pr.collection.ReadDocument(context.Background(), key, &product)
+	if err != nil {
+		log.Fatalf("Failed to read document")
+		return domain.Product{}, err
+	}
+
+	product = domain.Product{
+		ID:       string(meta.ID),
+		Key:      meta.Key,
+		Name:     product.Name,
+		Price:    product.Price,
+		Category: product.Category,
+		Quality:  product.Quality,
+	}
+	return product, nil
 }
