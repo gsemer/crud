@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"reflect"
 	"testing"
 
@@ -34,11 +35,15 @@ func TestGetProducts(t *testing.T) {
 			Quality:  "C",
 		},
 	}
-	ps.GetProductsReturns(products, nil)
+	ps.GetProductsReturns([]domain.Product{products[0]}, nil)
 
 	myHandlerFunc := ProductHandler{ps: ps}
 
-	request := httptest.NewRequest(http.MethodGet, "/products", nil)
+	values := url.Values{}
+	values.Set("page", "1")
+	values.Set("limit", "1")
+
+	request := httptest.NewRequest(http.MethodGet, "/products?"+values.Encode(), nil)
 	response := httptest.NewRecorder()
 
 	router := mux.NewRouter()
@@ -63,8 +68,8 @@ func TestGetProducts(t *testing.T) {
 		return
 	}
 
-	if !reflect.DeepEqual(result, products) {
-		t.Error("[ERROR] Not the expected output")
+	if !reflect.DeepEqual(result, []domain.Product{products[0]}) {
+		t.Error("Not the expected output")
 		return
 	}
 }
