@@ -28,7 +28,7 @@ func (pr ProductRepository) GetProducts(page int, limit int) ([]domain.Product, 
 	query := `FOR product IN products LIMIT @offset, @limit RETURN product`
 	cursor, err := pr.db.Query(context.Background(), query, bindVars)
 	if err != nil {
-		log.Fatalf("Failed to execute query")
+		log.Printf("Failed to execute query")
 		return nil, err
 	}
 	defer cursor.Close()
@@ -40,7 +40,7 @@ func (pr ProductRepository) GetProducts(page int, limit int) ([]domain.Product, 
 		if driver.IsNoMoreDocuments(err) {
 			break
 		} else if err != nil {
-			log.Fatalf("Failed to read document")
+			log.Printf("Failed to read document")
 			return nil, err
 		}
 
@@ -62,7 +62,7 @@ func (pr ProductRepository) GetProduct(key string) (domain.Product, error) {
 
 	meta, err := pr.collection.ReadDocument(context.Background(), key, &product)
 	if err != nil {
-		log.Fatalf("Failed to read document")
+		log.Printf("Failed to read document")
 		return domain.Product{}, err
 	}
 
@@ -80,7 +80,7 @@ func (pr ProductRepository) GetProduct(key string) (domain.Product, error) {
 func (pr ProductRepository) CreateProduct(product domain.Product) (domain.Product, error) {
 	meta, err := pr.collection.CreateDocument(context.Background(), &product)
 	if err != nil {
-		log.Fatalf("Couldn't create new document")
+		log.Printf("Couldn't create new document")
 		return domain.Product{}, err
 	}
 

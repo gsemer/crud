@@ -38,19 +38,19 @@ func NewCollectionRepository(collection driver.Collection) *CollectionRepository
 func (cr ClientRepository) GetOrCreateDB() (driver.Database, error) {
 	db_exists, err := cr.client.DatabaseExists(context.Background(), "crud")
 	if err != nil {
-		log.Fatalf("Failed to check if database exists")
+		log.Printf("Failed to check if database exists")
 	}
 	var db driver.Database
 	if !db_exists {
 		db, err = cr.client.CreateDatabase(context.Background(), "crud", nil)
 		if err != nil {
-			log.Fatalf("Failed to create database")
+			log.Printf("Failed to create database")
 			return nil, err
 		}
 	} else {
 		db, err = cr.client.Database(context.Background(), "crud")
 		if err != nil {
-			log.Fatalf("Failed to open database")
+			log.Printf("Failed to open database")
 			return nil, err
 		}
 	}
@@ -62,7 +62,7 @@ func (dr DatabaseRepository) GetOrCreateCollection() (driver.Collection, error) 
 	if driver.IsNotFoundGeneral(err) {
 		collection, err = dr.db.CreateCollection(context.Background(), "products", nil)
 		if err != nil {
-			log.Fatalf("Failed to create collection")
+			log.Printf("Failed to create collection")
 			return nil, err
 		}
 	} else if err != nil {
@@ -92,7 +92,7 @@ func (cr CollectionRepository) BulkCreate(n int64) ([]domain.Product, error) {
 	for _, product := range products {
 		meta, err := cr.collection.CreateDocument(context.Background(), product)
 		if err != nil {
-			log.Fatalf("An error occurred during bulk creation")
+			log.Printf("An error occurred during bulk creation")
 			return nil, err
 		}
 		product.Key = meta.Key
@@ -106,7 +106,7 @@ func (cr CollectionRepository) BulkCreate(n int64) ([]domain.Product, error) {
 func (cr CollectionRepository) IsEmpty() bool {
 	numOfDocs, err := cr.collection.Count(context.Background())
 	if err != nil {
-		log.Fatalf("Failed to get document count")
+		log.Printf("Failed to get document count")
 	}
 	return numOfDocs == 0
 }
