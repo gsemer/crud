@@ -94,3 +94,26 @@ func TestGetProducts_FAIL(t *testing.T) {
 		t.Errorf("Expected %v but got %v", http.StatusBadRequest, res.StatusCode)
 	}
 }
+
+func TestGetProducts_FAIL2(t *testing.T) {
+	ps := &fakes.FakeProductService{}
+	ps.GetProductsReturns(nil, nil)
+
+	myHandlerFunc := ProductHandler{ps: ps}
+
+	values := url.Values{}
+	values.Set("page", "1.5")
+	values.Set("limit", "1")
+
+	request := httptest.NewRequest(http.MethodGet, "/products?"+values.Encode(), nil)
+	response := httptest.NewRecorder()
+
+	router := mux.NewRouter()
+	router.HandleFunc("/products", myHandlerFunc.GetProducts)
+	router.ServeHTTP(response, request)
+
+	if response.Code != http.StatusBadRequest {
+		t.Errorf("Status code is not %v, but is %v", http.StatusBadRequest, response.Code)
+		return
+	}
+}
