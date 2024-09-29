@@ -4,6 +4,7 @@ import (
 	"crud/app/fakes"
 	"crud/domain"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -65,5 +66,26 @@ func TestGetProducts(t *testing.T) {
 	if !reflect.DeepEqual(result, products) {
 		t.Error("[ERROR] Not the expected output")
 		return
+	}
+}
+
+func TestGetProducts_FAIL(t *testing.T) {
+	ps := &fakes.FakeProductService{}
+	ps.GetProductsReturns(nil, errors.New("An error occurred during the execution"))
+
+	myHandlerFunc := ProductHandler{ps: ps}
+
+	server := httptest.NewServer(http.HandlerFunc(myHandlerFunc.GetProducts))
+	defer server.Close()
+
+	res, err := http.Get(server.URL)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	res.Body.Close()
+
+	if res.StatusCode != http.StatusBadRequest {
+		t.Errorf("Expected %v but got %v", http.StatusBadRequest, res.StatusCode)
 	}
 }
