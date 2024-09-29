@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/arangodb/go-driver"
 	arangohttp "github.com/arangodb/go-driver/http"
@@ -17,22 +18,27 @@ func main() {
 	fmt.Println("Server is up and running...")
 
 	// connect to ArangoDB
-	conn, err := arangohttp.NewConnection(
-		arangohttp.ConnectionConfig{
-			Endpoints: []string{"http://localhost:8529"},
-		},
-	)
-	if err != nil {
-		log.Fatalf("Failed to create HTTP connection: %v", err)
-	}
-	client, err := driver.NewClient(
-		driver.ClientConfig{
-			Connection:     conn,
-			Authentication: driver.BasicAuthentication("root", "rootpassword"),
-		},
-	)
-	if err != nil {
-		log.Fatalf("Failed to create the client: %v", err)
+	var client driver.Client
+	for i := 0; i < 5; i++ {
+		conn, err := arangohttp.NewConnection(
+			arangohttp.ConnectionConfig{
+				Endpoints: []string{"http://arangodb_db_container:8529"},
+			},
+		)
+		if err != nil {
+			log.Fatalf("Failed to create HTTP connection: %v", err)
+		}
+		client, err = driver.NewClient(
+			driver.ClientConfig{
+				Connection:     conn,
+				Authentication: driver.BasicAuthentication("root", "rootpassword"),
+			},
+		)
+		if err != nil {
+			log.Fatalf("Failed to create the client: %v", err)
+		}
+
+		time.Sleep(2 * time.Second)
 	}
 
 	// Create database
