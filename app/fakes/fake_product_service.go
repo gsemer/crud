@@ -33,9 +33,11 @@ type FakeProductService struct {
 		result1 domain.Product
 		result2 error
 	}
-	GetProductsStub        func() ([]domain.Product, error)
+	GetProductsStub        func(int, int) ([]domain.Product, error)
 	getProductsMutex       sync.RWMutex
 	getProductsArgsForCall []struct {
+		arg1 int
+		arg2 int
 	}
 	getProductsReturns struct {
 		result1 []domain.Product
@@ -177,17 +179,19 @@ func (fake *FakeProductService) GetProductReturnsOnCall(i int, result1 domain.Pr
 	}{result1, result2}
 }
 
-func (fake *FakeProductService) GetProducts() ([]domain.Product, error) {
+func (fake *FakeProductService) GetProducts(arg1 int, arg2 int) ([]domain.Product, error) {
 	fake.getProductsMutex.Lock()
 	ret, specificReturn := fake.getProductsReturnsOnCall[len(fake.getProductsArgsForCall)]
 	fake.getProductsArgsForCall = append(fake.getProductsArgsForCall, struct {
-	}{})
+		arg1 int
+		arg2 int
+	}{arg1, arg2})
 	stub := fake.GetProductsStub
 	fakeReturns := fake.getProductsReturns
-	fake.recordInvocation("GetProducts", []interface{}{})
+	fake.recordInvocation("GetProducts", []interface{}{arg1, arg2})
 	fake.getProductsMutex.Unlock()
 	if stub != nil {
-		return stub()
+		return stub(arg1, arg2)
 	}
 	if specificReturn {
 		return ret.result1, ret.result2
@@ -201,10 +205,17 @@ func (fake *FakeProductService) GetProductsCallCount() int {
 	return len(fake.getProductsArgsForCall)
 }
 
-func (fake *FakeProductService) GetProductsCalls(stub func() ([]domain.Product, error)) {
+func (fake *FakeProductService) GetProductsCalls(stub func(int, int) ([]domain.Product, error)) {
 	fake.getProductsMutex.Lock()
 	defer fake.getProductsMutex.Unlock()
 	fake.GetProductsStub = stub
+}
+
+func (fake *FakeProductService) GetProductsArgsForCall(i int) (int, int) {
+	fake.getProductsMutex.RLock()
+	defer fake.getProductsMutex.RUnlock()
+	argsForCall := fake.getProductsArgsForCall[i]
+	return argsForCall.arg1, argsForCall.arg2
 }
 
 func (fake *FakeProductService) GetProductsReturns(result1 []domain.Product, result2 error) {
