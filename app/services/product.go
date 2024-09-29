@@ -1,6 +1,8 @@
 package services
 
-import "crud/domain"
+import (
+	"crud/domain"
+)
 
 type ProductService struct {
 	pr domain.ProductRepository
