@@ -10,8 +10,8 @@ func NewProductService(pr domain.ProductRepository) *ProductService {
 	return &ProductService{pr: pr}
 }
 
-func (ps ProductService) GetProducts() ([]domain.Product, error) {
-	products, err := ps.pr.GetProducts()
+func (ps ProductService) GetProducts(page int, limit int) ([]domain.Product, error) {
+	products, err := ps.pr.GetProducts(page, limit)
 	if err != nil {
 		return nil, err
 	}

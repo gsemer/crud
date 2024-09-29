@@ -15,13 +15,13 @@ type Error struct {
 }
 
 type ProductService interface {
-	GetProducts() ([]Product, error)
+	GetProducts(page int, limit int) ([]Product, error)
 	GetProduct(key string) (Product, error)
 	CreateProduct(Product) (Product, error)
 }
 
 type ProductRepository interface {
-	GetProducts() ([]Product, error)
+	GetProducts(page int, limit int) ([]Product, error)
 	GetProduct(key string) (Product, error)
 	CreateProduct(Product) (Product, error)
 }

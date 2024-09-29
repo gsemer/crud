@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 )
@@ -18,7 +19,32 @@ func NewProductHandler(ps domain.ProductService) *ProductHandler {
 }
 
 func (ph ProductHandler) GetProducts(writer http.ResponseWriter, request *http.Request) {
-	products, err := ph.ps.GetProducts()
+	p, ok1 := request.URL.Query()["page"]
+	l, ok2 := request.URL.Query()["limit"]
+	var page, limit string
+	if ok1 && ok2 {
+		page = p[0]
+		limit = l[0]
+	} else {
+		writer.WriteHeader(http.StatusBadRequest)
+		writer.Write([]byte("Please make sure that you use all required query parameters: `page`, `limit`"))
+		return
+	}
+
+	pageToInt, err := strconv.Atoi(page)
+	if err != nil {
+		writer.WriteHeader(http.StatusBadRequest)
+		writer.Write([]byte("Please make sure that `page` is an integer"))
+		return
+	}
+	limitToInt, err := strconv.Atoi(limit)
+	if err != nil {
+		writer.WriteHeader(http.StatusBadRequest)
+		writer.Write([]byte("Please make sure that `limit` is an integer"))
+		return
+	}
+
+	products, err := ph.ps.GetProducts(pageToInt, limitToInt)
 	if err != nil {
 		writer.WriteHeader(http.StatusBadRequest)
 		err2 := domain.Error{

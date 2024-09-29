@@ -17,9 +17,16 @@ func NewProductRepository(db driver.Database, collection driver.Collection) *Pro
 	return &ProductRepository{db: db, collection: collection}
 }
 
-func (pr ProductRepository) GetProducts() ([]domain.Product, error) {
-	query := "FOR product IN products RETURN product"
-	cursor, err := pr.db.Query(context.Background(), query, nil)
+func (pr ProductRepository) GetProducts(page int, limit int) ([]domain.Product, error) {
+	offset := (page - 1) * limit
+
+	bindVars := map[string]interface{}{
+		"offset": offset,
+		"limit":  limit,
+	}
+
+	query := `FOR product IN products LIMIT @offset, @limit RETURN product`
+	cursor, err := pr.db.Query(context.Background(), query, bindVars)
 	if err != nil {
 		log.Fatalf("Failed to execute query")
 		return nil, err
