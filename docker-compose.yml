@@ -1,0 +1,35 @@
+version: '3.7'
+
+networks:
+  crud-network:
+    external: true
+
+services:
+  arangodb_db_container:
+    image: arangodb:latest
+    container_name: arangodb_db_container
+    environment:
+      ARANGO_URL: http://arangodb_db_container:8529/_db/crud/_api/database/current
+      ARANGO_ROOT_PASSWORD: rootpassword
+    ports:
+      - 8529:8529
+    volumes:
+      - arangodb_data_container:/var/lib/arangodb3
+      - arangodb_apps_data_container:/var/lib/arangodb3-apps
+    networks:
+      - crud-network
+
+  crud_container:
+    build: .
+    image: crud
+    container_name: crud_container 
+    ports: 
+      - 8000:8000
+    depends_on:
+      - arangodb_db_container
+    networks:
+      - crud-network
+
+volumes:
+  arangodb_data_container:
+  arangodb_apps_data_container:
